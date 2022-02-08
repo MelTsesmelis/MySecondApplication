@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.filament.View;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -40,19 +41,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     @Override
                     public void run() {
                         ContentResolver contentResolver = getContentResolver();
-                        Uri uri = Uri.parse("com.example.geofencing/CORDINATES");
+                        Uri uri = Uri.parse("content://com.example.geofencing/CORDINATES");
                         Cursor cursor = contentResolver.query(
                                 uri,
                                 null,
                                 null,
                                 null,
                                 null);
-                        if (cursor.moveToFirst()) {
-                            while (cursor.moveToNext()) {
-                                Log.d("Cursor", cursor.getString(0));
-                            }
+
+                        if (cursor == null) {
+                            //nothing taken by database so do nothing
+                            Log.d("Null Cursor","Nothing found in DB");
                         } else {
-                            Log.d("ERROR", "nothing found in this cursor");
+                            if (cursor.moveToFirst()) {
+                                while (cursor.moveToNext()) {
+                                    Log.d("Cursor", cursor.getString(0));
+                                }
+                            } else {
+                                Log.d("ERROR", "nothing found in this cursor");
+                            }
                         }
                     }
                 });
