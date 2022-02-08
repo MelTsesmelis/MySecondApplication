@@ -21,12 +21,13 @@ import com.example.mysecondapplication.databinding.ActivityMapsBinding;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    //arxikopoihseis
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
     private static Context context;
 
 
-    @Override
+    @Override// dhmioyrgia map mesw enous fragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
@@ -37,33 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ContentResolver contentResolver = getContentResolver();
-                        Uri uri = Uri.parse("content://com.example.geofencing/CORDINATES");
-                        Cursor cursor = contentResolver.query(
-                                uri,
-                                null,
-                                null,
-                                null,
-                                null);
 
-                        if (cursor == null) {
-                            //nothing taken by database so do nothing
-                            Log.d("Null Cursor","Nothing found in DB");
-                        } else {
-                            if (cursor.moveToFirst()) {
-                                while (cursor.moveToNext()) {
-                                    Log.d("Cursor", cursor.getString(0));
-                                }
-                            } else {
-                                Log.d("ERROR", "nothing found in this cursor");
-                            }
-                        }
-                    }
-                });
-                thread.start();
             }
 
     /**
@@ -76,12 +51,57 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * installed Google Play services and returned to the app.
      */
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) { // otan tha nai etoimo to map
         mMap = googleMap;
 
         // Add a marker in Eleusis and move the camera
         LatLng eleusis = new LatLng(38.041275, 23.541812);
         mMap.addMarker(new MarkerOptions().position(eleusis).title("Marker in Eleusis"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(eleusis));
-    }
+
+                //gia thn epikoinwnia me thn allh efarmogh
+                ContentResolver contentResolver = getContentResolver();
+                Uri uri = Uri.parse("content://com.example.geofencing/CORDINATES");
+
+                // dhmiourgia cursora gia na parei tis plhrofories
+                Cursor cursor = contentResolver.query(
+                        uri,
+                        null,
+                        null,
+                        null,
+                        null);
+
+                //an den kataferei na tis parei
+                if (cursor == null) {
+                    //nothing taken by database so do nothing
+                    Log.d("Null Cursor","Nothing found in DB");
+                    LatLng location1 = new LatLng(38.0412,23.5420);
+                    mMap.addMarker(new MarkerOptions().position(location1));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location1));
+
+                    LatLng location2= new LatLng(38.0413 ,23.5420);
+                    mMap.addMarker(new MarkerOptions().position(location2));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location2));
+
+                    LatLng location3 = new LatLng(38.0414, 23.5420);
+                    mMap.addMarker(new MarkerOptions().position(location3));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location3));
+
+                    LatLng location4 = new LatLng(38.0415, 23.5420);
+                    mMap.addMarker(new MarkerOptions().position(location4));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(location4));
+                } else {//an tis pairnei
+                    if (cursor.moveToFirst()) { //kai exei mesa data
+                        while (cursor.moveToNext()) {
+                           // Log.d("Cursor success", cursor.getString(0));
+                            LatLng locations = new LatLng(cursor.getDouble(1),cursor.getDouble(2));
+                            mMap.addMarker(new MarkerOptions().position(locations));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(locations)); //metakinei thn kamera sto shmeio auto
+
+                        }
+                    } else { //kai den exei mesa da
+                        Log.d("ERROR", "nothing found in this cursor");
+                    }
+                }
+            }
 }
